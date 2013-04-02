@@ -1,7 +1,10 @@
 <!doctype html>
 <html><head><style>
+body{
+	background-color:#333;
+}
 canvas#myCanvas {
-	border:1px solid black;
+	border:1px solid white;
 }
 </style></head><body>
 <center><canvas id="myCanvas"/></center>
@@ -33,11 +36,12 @@ var Circle = function (x,y,r,vx,vy,bounce,color) {
 	this.vx = vx;
 	this.vy = vy;
 	this.bounce = bounce;
-	this.color = "#" + color;	
+	this.color = "#" + color;
+	this.lineWidth = Math.random() * 5;
 }
 Circle.prototype.draw = function (context) {
 	context.beginPath();
-	context.lineWidth = "1";
+	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.color;
 	context.arc(this.x,this.y,this.r,0,2*Math.PI);
 	context.closePath();
@@ -49,16 +53,17 @@ canvas.height = 600;
 canvas.width = 800;
 var canvasContext = canvas.getContext("2d");
 var squares = [];
-for (var i = 0; i <= 200; i++) {
+for (var i = 0; i <= 100; i++) {
 	squares.push(
 		new Circle(
 			Math.random()*canvas.width,
 			Math.random()*canvas.height,
-			10,
+			Math.random()*30,
 			Math.random()*10-5,
 			Math.random()*10-5,
 			-1,
-			(Math.random()*0xffffff<<0).toString(16)
+			"ffffff"
+			/*(Math.random()*0xffffff<<0).toString(16)*/
 		)
 	);
 }
@@ -72,6 +77,8 @@ var CircleToCircleCollision = function (circle1,circle2) {
 
 function update() {
 	canvas.width = canvas.width;
+	canvasContext.fillStyle = "#000000";
+	canvasContext.fillRect(0,0,canvas.width,canvas.height);
 	for (var i in squares) {
 		var s = squares[i];
 		s.x += s.vx;
@@ -93,7 +100,7 @@ function update() {
 			s.vy *= s.bounce;
 		}
 
-		for (var j in squares) {
+		/*for (var j in squares) {
 			var t = squares[j];
 			if (i != j) {
 				if (CircleToCircleCollision(s,t)) {
@@ -110,7 +117,7 @@ function update() {
 					t.y += t.vy;
 				}
 			}
-		}
+		}*/
 		s.draw(canvasContext);
 	}
 }
