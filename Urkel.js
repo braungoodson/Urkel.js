@@ -1,5 +1,5 @@
 
-var Circle = function (x,y,r,vx,vy,bounce,color) {
+var Particle = function (x,y,r,vx,vy,bounce,color) {
 	this.x = Math.floor(x);
 	this.y = Math.floor(y);
 	this.r = r;
@@ -10,7 +10,7 @@ var Circle = function (x,y,r,vx,vy,bounce,color) {
 	this.lineWidth = 1;
 }
 
-Circle.prototype.draw = function (context) {
+Particle.prototype.draw = function (context) {
 	context.beginPath();
 	context.lineWidth = this.lineWidth;
 	context.strokeStyle = this.color;
@@ -19,17 +19,48 @@ Circle.prototype.draw = function (context) {
 	context.stroke();
 }
 
-var CircleToCircleCollision = function (circle1,circle2) {
-	var dx = circle1.x - circle2.x;
-	var dy = circle1.y - circle2.y;
+var ParticleToParticleCollision = function (particle1,particle2) {
+	var dx = particle1.x - particle2.x;
+	var dy = particle1.y - particle2.y;
 	var d = Math.sqrt((dx * dx) + (dy * dy));
-	return d <= (circle1.r + circle2.r);
+	return d <= (particle1.r + particle2.r);
 }
 
-var update = function () {
-	canvas.width = canvas.width;
-	canvasContext.fillStyle = "#000000";
-	canvasContext.fillRect(0,0,canvas.width,canvas.height);
+var Urkel = Urkel || {};
+
+Urkel.RandomColor = function () {return "#" + (Math.random()*0xffffff<<0).toString(16)}
+
+Urkel._50bitParticle = function (particles) {
+	particles.push(
+		new Particle(
+			Math.random()*canvas.width,
+			Math.random()*canvas.height,
+			50,
+			Math.random()*10-5,
+			Math.random()*10-5,
+			-1,
+			"ffffff"
+			//(Math.random()*0xffffff<<0).toString(16)
+		)
+	);
+}
+
+Urkel._1bitParticle = function (particles) {
+	particles.push(
+		new Particle(
+			Math.random()*canvas.width,
+			Math.random()*canvas.height,
+			1,
+			Math.random()*10-5,
+			Math.random()*10-5,
+			-1,
+			"ffffff"
+		)
+	);
+}
+
+Urkel.BasicPainter = function () {
+
 	for (var i in particles) {
 		var p = particles[i];
 		p.x += p.vx;
@@ -54,7 +85,7 @@ var update = function () {
 		for (var j in particles) {
 			var t = particles[j];
 			if (i != j) {
-				if (CircleToCircleCollision(p,t)) {
+				if (ParticleToParticleCollision(p,t)) {
 					p.vx *= p.bounce;
 					p.x += p.vx;
 
@@ -66,9 +97,10 @@ var update = function () {
 
 					t.vy *= t.bounce;
 					t.y += t.vy;
+
 				}
 				// check twice because particles are prone to sticking to each other.
-				if (CircleToCircleCollision(p,t)) {
+				if (ParticleToParticleCollision(p,t)) {
 					p.vx *= p.bounce;
 					p.x += 1;
 
@@ -87,6 +119,9 @@ var update = function () {
 	}
 }
 
+// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program
+// Begin Program
+
 if (window.HTMLCanvasElement) {
 	var canvas = document.getElementById("myCanvas");
 	canvas.height = 600;
@@ -94,20 +129,9 @@ if (window.HTMLCanvasElement) {
 	var canvasContext = canvas.getContext("2d");
 	var particles = [];
 
-	for (var i = 0; i <= 99; i++) {
-		particles.push(
-			new Circle(
-				Math.random()*canvas.width,
-				Math.random()*canvas.height,
-				2,
-				Math.random()*10-5,
-				Math.random()*10-5,
-				-1,
-				"ffffff"
-				//(Math.random()*0xffffff<<0).toString(16)
-			)
-		);
+	for (var i = 0; i <= 3; i++) {
+		new Urkel._50bitParticle(particles);
 	}
 
-	window.setInterval(update,10);
+	window.setInterval(Urkel.BasicPainter,10);
 }
