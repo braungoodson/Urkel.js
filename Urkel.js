@@ -45,6 +45,20 @@ Urkel._50bitParticle = function (particles) {
 	);
 }
 
+Urkel._10bitParticle = function (particles) {
+	particles.push(
+		new Particle(
+			Math.random()*canvas.width,
+			Math.random()*canvas.height,
+			10,
+			Math.random()*10-5,
+			Math.random()*10-5,
+			-1,
+			"ffffff"
+		)
+	);
+}
+
 Urkel._1bitParticle = function (particles) {
 	particles.push(
 		new Particle(
@@ -61,7 +75,10 @@ Urkel._1bitParticle = function (particles) {
 
 Urkel.BasicPainter = function () {
 
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
 	for (var i in particles) {
+        
 		var p = particles[i];
 		p.x += p.vx;
 		p.y += p.vy;
@@ -119,7 +136,6 @@ Urkel.BasicPainter = function () {
 	}
 }
 
-// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program// Begin Program
 // Begin Program
 
 if (window.HTMLCanvasElement) {
@@ -129,8 +145,8 @@ if (window.HTMLCanvasElement) {
 	var canvasContext = canvas.getContext("2d");
 	var particles = [];
 
-	for (var i = 0; i <= 3; i++) {
-		new Urkel._50bitParticle(particles);
+	for (var i = 0; i <= 24; i++) {
+		new Urkel._10bitParticle(particles);
 	}
 
 	window.setInterval(Urkel.BasicPainter,10);
